@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "msq.h"
 
-void v_reserve(struct vector *v,unsigned int capacity)
+void v_reserve(struct vector *v,uint capacity)
 {
 	v->capacity = capacity;
 	void ** old_arr = v->objects;
@@ -19,7 +19,7 @@ void v_free(struct vector* v)
 	free(v->objects);
 }
 
-struct vector v_create(unsigned int capacity)
+struct vector v_create(uint capacity)
 {
 	struct vector v;
 	v_reserve(&v, capacity);
@@ -27,7 +27,7 @@ struct vector v_create(unsigned int capacity)
 	return v;
 }
 
-struct vector v_create_from_arr(void** a, unsigned int s)
+struct vector v_create_from_arr(void** a, uint s)
 {
 	struct vector v = v_create(s);
 	for (int i = 0; i < s; i++)
@@ -43,12 +43,12 @@ void v_append(struct vector* v, void * o)
 	v->size++;
 }
 
-void v_remove(struct vector* v, unsigned int index)
+void v_remove(struct vector* v, uint index)
 {
 	v->objects[index] = NULL;
 }
 
-void * msq_malloc(struct msq_malloc_tracker *tracker, unsigned int size, msq_malloc_index *index)
+void * msq_malloc(struct msq_malloc_tracker *tracker, uint size, msq_malloc_index *index)
 {
 	void * a = malloc(size);
 
