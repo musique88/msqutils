@@ -9,15 +9,15 @@ typedef unsigned int uint;
 #define VECTOR_ADDED_CAPACITY 5
 
 struct vector{
-	void ** objects;
-	uint size;
-	uint capacity;
+	void ** o;
+	uint s;
+	uint c;
 };
 
 void v_reserve(struct vector *v, uint capacity);
 void v_free(struct vector *v);
-struct vector v_create(uint capacity);
-struct vector v_create_from_arr(void** a, uint s);
+struct vector* v_create(uint capacity);
+struct vector* v_create_from_arr(void** a, uint s);
 void v_append(struct vector* v, void * o);
 
 enum msq_malloc_flags{
@@ -31,7 +31,9 @@ struct msq_malloc_tracker{
 	struct vector v;
 };
 
-void * msq_malloc(struct msq_malloc_tracker *tracker, uint size, msq_malloc_index *index);
-void * msq_malloc_at(struct msq_malloc_tracker *tracker, msq_malloc_index index);
-void msq_free(struct msq_malloc_tracker *tracker, msq_malloc_index index);
-void msq_free_all(struct msq_malloc_tracker *tracker);
+void init_msq_malloc_tracker();
+struct msq_malloc_tracker* get_malloc_tracker();
+void * msq_malloc(uint size, msq_malloc_index *index);
+void * msq_malloc_at(msq_malloc_index index);
+void msq_free(msq_malloc_index index);
+void msq_free_all();
