@@ -4,42 +4,41 @@
 
 struct msq_malloc_tracker* msq_malloc_tracker;
 
-void v_reserve(struct vector *v,uint capacity)
+void v_reserve(vector *v, uint capacity)
 {
 	v->c = capacity;
 	void ** old_arr = v->o;
-	v->o = malloc(sizeof(v->o) * capacity);
-	for (int i = 0; i < v->s && i < capacity; i++)
-	{
-		v->o[i] = old_arr[i];
-	}
+	v->o = malloc(sizeof(*v->o) * capacity);
+	if (old_arr != 0)
+		for (int i = 0; i < v->s && i < capacity; i++)
+			v->o[i] = old_arr[i];
 	free(old_arr);
 }
 
-void v_free(struct vector* v)
+void v_free(vector* v)
 {
 	for (int i = 0; i < v->s; i++)
 		free(v->o[i]);
 	free(v->o);
 }
 
-struct vector* v_create(uint capacity)
+vector* v_create(uint capacity)
 {
-	struct vector* v = malloc(sizeof(*v));
-	v_reserve(v, capacity);
+	vector* v = malloc(sizeof(*v));
 	v->o = 0;
+	v_reserve(v, capacity);
 	return v;
 }
 
-struct vector* v_create_from_arr(void** a, uint s)
+vector* v_create_from_arr(void** a, uint s)
 {
-	struct vector* v = v_create(s);
+	vector* v = v_create(s);
 	for (int i = 0; i < s; i++)
 		v->o[i] = a[i];
 	return v;
 }
 
-void v_append(struct vector* v, void * o)
+void v_append(vector* v, void * o)
 {
 	if(v->s + 1 > v->c)
 		v_reserve(v, v->c + VECTOR_ADDED_CAPACITY);
@@ -47,9 +46,15 @@ void v_append(struct vector* v, void * o)
 	v->s++;
 }
 
-void v_remove(struct vector* v, uint index)
+void v_remove(vector* v, uint index)
 {
 	v->o[index] = NULL;
+}
+
+void v_fill(vector* v, void * o, uint start_index, uint nb_of_times)
+{
+	for (int i = start_index; i < start_index + nb_of_times; i++)
+		v->o[i] = o;
 }
 
 struct msq_malloc_tracker* get_malloc_tracker()

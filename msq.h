@@ -8,17 +8,18 @@ typedef unsigned int uint;
 
 #define VECTOR_ADDED_CAPACITY 5
 
-struct vector{
+typedef struct{
 	void ** o;
 	uint s;
 	uint c;
-};
+} vector;
 
-void v_reserve(struct vector *v, uint capacity);
-void v_free(struct vector *v);
-struct vector* v_create(uint capacity);
-struct vector* v_create_from_arr(void** a, uint s);
-void v_append(struct vector* v, void * o);
+void v_reserve(vector *v, uint capacity);
+void v_free(vector *v);
+vector* v_create(uint capacity);
+vector* v_create_from_arr(void** a, uint s);
+void v_append(vector* v, void * o);
+void v_fill(vector* v, void * o, uint start_index, uint nb_of_times);
 
 enum msq_malloc_flags{
 	MSQ_LOG_MALLOC = 0b00000001
@@ -28,7 +29,7 @@ typedef uint msq_malloc_index;
 
 struct msq_malloc_tracker{
 	uchar flags;
-	struct vector v;
+	vector v;
 };
 
 void init_msq_malloc_tracker();
