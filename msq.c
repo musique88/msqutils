@@ -73,7 +73,7 @@ void* msq_malloc(uint size, msq_malloc_index *index)
 {
 	void * a = malloc(size);
 
-	if ((get_malloc_tracker()->flags & (1 << 0))!=0)
+	if (get_malloc_tracker()->flags)
 		printf("%s msq_malloc of address %8X of size %d \n", msq_info, a, size);
 	v_append(&get_malloc_tracker()->v,a);
 	if (index != 0)
