@@ -18,6 +18,7 @@ void v_reserve(vector *v, uint capacity);
 void v_free(vector *v);
 vector* v_create(uint capacity);
 vector* v_create_from_arr(void** a, uint s);
+void v_insert(vector* v, void * o, uint index);
 void v_append(vector* v, void * o);
 void v_fill(vector* v, void * o, uint start_index, uint nb_of_times);
 

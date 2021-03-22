@@ -20,6 +20,7 @@ void v_free(vector* v)
 	for (int i = 0; i < v->s; i++)
 		free(v->o[i]);
 	free(v->o);
+	free(v);
 }
 
 vector* v_create(uint capacity)
@@ -35,7 +36,21 @@ vector* v_create_from_arr(void** a, uint s)
 	vector* v = v_create(s);
 	for (int i = 0; i < s; i++)
 		v->o[i] = a[i];
+	v->s = s;
 	return v;
+}
+
+void v_insert(vector* v, void * o, uint index)
+{
+	void ** arr = v->o;
+	v->c = (v->s + 1 > v->c ? v->c + VECTOR_ADDED_CAPACITY: v->c);
+	v->o = malloc(sizeof(*v->o) * v->c);
+	for (int i = 0; i < index; i++)
+		v->o[i] = arr[i];
+	v->o[index] = o;
+	for (int i = index + 1; i < v->s; i++)
+		v->o[i] = arr[i - 1];
+	v->s++;
 }
 
 void v_append(vector* v, void * o)
