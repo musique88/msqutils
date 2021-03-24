@@ -20,6 +20,7 @@ vector* v_create(uint capacity);
 vector* v_create_from_arr(void** a, uint s);
 void v_insert(vector* v, void * o, uint index);
 void v_append(vector* v, void * o);
+void v_remove(vector* v, uint index);
 void v_fill(vector* v, void * o, uint start_index, uint nb_of_times);
 
 enum msq_malloc_flags{

@@ -27,6 +27,7 @@ vector* v_create(uint capacity)
 {
 	vector* v = malloc(sizeof(*v));
 	v->o = 0;
+	v->s = 0;
 	v_reserve(v, capacity);
 	return v;
 }
@@ -48,8 +49,9 @@ void v_insert(vector* v, void * o, uint index)
 	for (int i = 0; i < index; i++)
 		v->o[i] = arr[i];
 	v->o[index] = o;
-	for (int i = index + 1; i < v->s; i++)
+	for (int i = index + 1; i < v->s + 1; i++)
 		v->o[i] = arr[i - 1];
+	free(arr);
 	v->s++;
 }
 
@@ -63,7 +65,9 @@ void v_append(vector* v, void * o)
 
 void v_remove(vector* v, uint index)
 {
-	v->o[index] = NULL;
+	for (int i = index; i < v->s; i++)
+		v->o[i] = v->o[i + 1];
+	v->s--;
 }
 
 void v_fill(vector* v, void * o, uint start_index, uint nb_of_times)
