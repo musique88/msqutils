@@ -117,5 +117,5 @@ void msq_free_all()
 {
 	for(int i = 0; i < get_malloc_tracker()->v.s && get_malloc_tracker()->v.o[i] != NULL; i++)
 		msq_free(i);
-	v_free(&get_malloc_tracker()->v);
+	//v_free(&get_malloc_tracker()->v);
 }

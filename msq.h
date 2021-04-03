@@ -1,7 +1,6 @@
 #define msq_info "[INFO]"
-#define msq_warn "\033[93m[WARNING]"
-#define msq_erro "\033[1;31m[ERROR]"
-#define msq_end "\033[0m\n"
+#define msq_warn "\033[93m[WARNING]\033[0m"
+#define msq_erro "\033[1;31m[ERROR]\033[0m"
 
 typedef unsigned char uchar;
 typedef unsigned int uint;
