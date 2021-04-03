@@ -105,7 +105,7 @@ void* msq_malloc_at(msq_malloc_index index)
 	return get_malloc_tracker()->v.o[index];
 }
 
-void msq_free(msq_malloc_index index)
+void msq_free_at(msq_malloc_index index)
 {
 	if ((get_malloc_tracker()->flags & (1 << 0))!=0)
 		printf("%s msq_free of address %8X at index %d \n", msq_info, msq_malloc_at(index), index);
@@ -113,9 +113,21 @@ void msq_free(msq_malloc_index index)
 	v_remove(&get_malloc_tracker()->v, index);
 }
 
+void msq_free(void* pointer_to_free)
+{
+	uint index;
+	for(int i = get_malloc_tracker()->v.s - 1; i >= 0; i--)
+	{
+		if(pointer_to_free == msq_malloc_at(i))
+		{
+			index = i;
+			break;
+		}
+	}
+	msq_free_at(index);
+}
+
 void msq_free_all()
 {
-	for(int i = 0; i < get_malloc_tracker()->v.s && get_malloc_tracker()->v.o[i] != NULL; i++)
-		msq_free(i);
-	//v_free(&get_malloc_tracker()->v);
+	v_free(&get_malloc_tracker()->v);
 }

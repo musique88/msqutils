@@ -37,5 +37,6 @@ void init_msq_malloc_tracker();
 struct msq_malloc_tracker* get_malloc_tracker();
 void * msq_malloc(uint size, msq_malloc_index *index);
 void * msq_malloc_at(msq_malloc_index index);
-void msq_free(msq_malloc_index index);
+void msq_free_at(msq_malloc_index index);
+void msq_free(void* pointer_to_free);
 void msq_free_all();
