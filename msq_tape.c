@@ -1,17 +1,16 @@
 #include "msq_tape.h"
 #include "msq.h"
+#include <stdlib.h>
 
 msq_tape * msq_tape_create(uint nb_channels, uint length, uint nb_read_heads)
 {
-    msq_tape * tape = msq_malloc(sizeof(*tape), 0);
-    tape->buffer = msq_malloc(sizeof(*tape->buffer)*nb_channels, 0);
-    for (int i = 0; i < nb_channels; i++)
-        tape->buffer[i] = msq_malloc(sizeof(*tape->buffer[i])*length, 0);
+    msq_tape *tape = malloc(sizeof(*tape));
+    tape->buffer = malloc(sizeof(*tape->buffer) * length * nb_channels);
     tape->length = length;
     tape->nb_read_heads = nb_read_heads;
-    tape->write_head_position = 0;
     tape->nb_channels = nb_channels;
-    tape->read_head_positions = msq_malloc(sizeof(*tape->read_head_positions)*nb_read_heads ,0);
+    tape->write_head_position = 0;
+    tape->read_head_positions = malloc(sizeof(*tape->buffer) * nb_read_heads);
     for (int i = 0; i < nb_read_heads; i++)
         tape->read_head_positions[i] = 0;
     return tape;
@@ -37,32 +36,18 @@ void msq_tape_set_write_position(msq_tape *tape, uint position)
     tape->write_head_position = position;
 }
 
-void msq_tape_write(msq_tape *tape, int ** data_to_write, uint length)
+void msq_tape_write(msq_tape *tape, int * data_to_write, uint length)
 {
-    for(int i = 0; i < tape->nb_channels; i++)
-        for(int j = 0; j < length; j++)
-            tape->buffer[i][(j+tape->write_head_position)%tape->length] = data_to_write[i][j]; // this could be optimised further
-    tape->write_head_position = (tape->write_head_position + length)%tape->length;
+    for(int i = 0; i < length * tape->nb_channels; i++)
+        tape->buffer[(tape->write_head_position+i)] = data_to_write[i];
+    tape->write_head_position = (tape->write_head_position + length)%(tape->length * tape->nb_channels);
 }
 
-void msq_tape_write_from_interleaved(msq_tape *tape, int * data_to_write, unsigned int length)
+int * msq_tape_read(msq_tape *tape, uint length, uint read_head_index)
 {
-    for(int i = 0; i < tape->nb_channels; i++)
-        for(int j = 0; j < length; j++)
-            tape->buffer[i][(j+tape->write_head_position)%tape->length] = data_to_write[j*tape->nb_channels + i]; // this could be optimised further
-    tape->write_head_position = (tape->write_head_position + length)%tape->length;
-}
-
-int ** msq_tape_read(msq_tape *tape, uint length, uint read_head_index)
-{
-    int ** new_buffer = msq_malloc(sizeof(*new_buffer), 0);
-    for (int i = 0; i < tape->nb_channels; i++)
-        new_buffer[i] = msq_malloc(sizeof(*new_buffer[i])*length, 0);
-
-    for (int i = 0; i < tape->nb_channels; i++)
-        for (int j = 0; j < length; j++)
-            new_buffer[i][j] = tape->buffer[i][(tape->read_head_positions[read_head_index] + j)%tape->length]; // this could be optimised further
-
-    tape->read_head_positions[read_head_index] = (tape->read_head_positions[read_head_index] + length)%tape->length;
-    return new_buffer;
+    int *b = malloc(sizeof(*b) * length * tape->nb_channels);
+    for (int i = 0; i < length * tape->nb_channels; i++)
+        b[i] = tape->buffer[(tape->read_head_positions[read_head_index]+i)%(tape->length * tape->nb_channels)];
+    tape->read_head_positions[read_head_index] = (tape->read_head_positions[read_head_index] + length * tape->nb_channels)%(tape->length * tape->nb_channels);
+    return b;
 }

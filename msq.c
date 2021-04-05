@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include "msq.h"
 
-struct msq_malloc_tracker* msq_malloc_tracker;
-
 void v_reserve(vector *v, uint capacity)
 {
 	v->c = capacity;
@@ -74,60 +72,4 @@ void v_fill(vector* v, void * o, uint start_index, uint nb_of_times)
 {
 	for (int i = start_index; i < start_index + nb_of_times; i++)
 		v->o[i] = o;
-}
-
-struct msq_malloc_tracker* get_malloc_tracker()
-{
-	if (msq_malloc_tracker == 0)
-		init_msq_malloc_tracker();	
-	return msq_malloc_tracker;
-}
-
-void init_msq_malloc_tracker()
-{
-	msq_malloc_tracker = malloc(sizeof(*msq_malloc_tracker));
-}
-
-void* msq_malloc(uint size, msq_malloc_index *index)
-{
-	void * a = malloc(size);
-
-	if (get_malloc_tracker()->flags)
-		printf("%s msq_malloc of address %8X of size %d \n", msq_info, a, size);
-	v_append(&get_malloc_tracker()->v,a);
-	if (index != 0)
-		*index = get_malloc_tracker()->v.s-1;
-	return a;
-}
-
-void* msq_malloc_at(msq_malloc_index index)
-{
-	return get_malloc_tracker()->v.o[index];
-}
-
-void msq_free_at(msq_malloc_index index)
-{
-	if ((get_malloc_tracker()->flags & (1 << 0))!=0)
-		printf("%s msq_free of address %8X at index %d \n", msq_info, msq_malloc_at(index), index);
-	free(msq_malloc_at(index));
-	v_remove(&get_malloc_tracker()->v, index);
-}
-
-void msq_free(void* pointer_to_free)
-{
-	uint index;
-	for(int i = get_malloc_tracker()->v.s - 1; i >= 0; i--)
-	{
-		if(pointer_to_free == msq_malloc_at(i))
-		{
-			index = i;
-			break;
-		}
-	}
-	msq_free_at(index);
-}
-
-void msq_free_all()
-{
-	v_free(&get_malloc_tracker()->v);
 }

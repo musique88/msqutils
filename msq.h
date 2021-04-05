@@ -22,21 +22,3 @@ void v_append(vector* v, void * o);
 void v_remove(vector* v, uint index);
 void v_fill(vector* v, void * o, uint start_index, uint nb_of_times);
 
-enum msq_malloc_flags{
-	MSQ_LOG_MALLOC = 0b00000001
-};
-
-typedef uint msq_malloc_index;
-
-struct msq_malloc_tracker{
-	uchar flags;
-	vector v;
-};
-
-void init_msq_malloc_tracker();
-struct msq_malloc_tracker* get_malloc_tracker();
-void * msq_malloc(uint size, msq_malloc_index *index);
-void * msq_malloc_at(msq_malloc_index index);
-void msq_free_at(msq_malloc_index index);
-void msq_free(void* pointer_to_free);
-void msq_free_all();
